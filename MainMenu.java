@@ -36,6 +36,7 @@ private JButton exitButton;
         add(exitButton);
 
         ButtonHandler handler = new ButtonHandler();
+        newGameButton.addActionListener(handler);
         helpButton.addActionListener(handler);
         aboutButton.addActionListener(handler);
         exitButton.addActionListener(handler);

@@ -8,4 +8,9 @@ public class MainGame extends JFrame {
     private JComponent ball;
     private JComponent player;
     private JComponent[] blocks;
+
+    public MainGame() {
+
+        
+    }
 }
