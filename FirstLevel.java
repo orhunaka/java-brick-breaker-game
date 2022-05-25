@@ -12,11 +12,17 @@ public class FirstLevel extends JFrame {
     public FirstLevel() {
 
         super("Level 1");
-    
-        ImageIcon ballIcon = new ImageIcon("ball.png");
-        ball = new JLabel(ballIcon);
+        setLayout(null);
+
+        ImageIcon icon = new ImageIcon("ball.png");
+        Image img = icon.getImage();
+        Image scaledImg = img.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(scaledImg);
+        ball = new JLabel();
+        ball.setIcon(scaledIcon);
 
         add(ball);
+        ball.setBounds(100, 100, 30, 30);
         
     }
 }
