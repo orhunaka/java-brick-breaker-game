@@ -58,9 +58,11 @@ private JButton exitButton;
                 JOptionPane.showMessageDialog(null, "Press the right and the left arrows keys to move the bar.\nBreak as many points as you can to get the most points.", "About", JOptionPane.PLAIN_MESSAGE);
             } else if (event.getSource() == newGameButton) {
 
-                MainGame mainGame = new MainGame();
+                JOptionPane.showMessageDialog(null, "The game is about to begin. Break all the bricks to get to the next level. Good luck.");
+
+                FirstLevel mainGame = new FirstLevel();
                 mainGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                mainGame.setSize(800, 600);
+                mainGame.setSize(400, 300);
                 mainGame.setLocationRelativeTo(null);
                 mainGame.setVisible(true);
             }
