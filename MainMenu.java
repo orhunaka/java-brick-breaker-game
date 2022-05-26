@@ -60,7 +60,7 @@ private JButton exitButton;
 
                 JOptionPane.showMessageDialog(null, "The game is about to begin. Break all the bricks to get to the next level. Good luck.");
 
-                FirstLevel mainGame = new FirstLevel();
+                ThirdLevel mainGame = new ThirdLevel();
                 mainGame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 mainGame.setSize(400, 300);
                 mainGame.setLocationRelativeTo(null);
