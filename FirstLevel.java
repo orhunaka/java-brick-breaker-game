@@ -9,7 +9,7 @@ public class FirstLevel extends JFrame {
 
     Player player;
     Ball ball;
-    Bricks bricks;
+    RedBricks bricks;
 
     private final int brickWidth = 30;
     private final int brickHeight = 10;
@@ -40,7 +40,7 @@ public class FirstLevel extends JFrame {
         //Creating the bricks.
         for (int i = 0; i < 10; i++) {
 
-            bricks = new Bricks();
+            bricks = new RedBricks();
             bricksArray.add(bricks);
 
             add(bricksArray.get(i));
@@ -53,7 +53,7 @@ public class FirstLevel extends JFrame {
 
         for (int i = 10; i < 20; i++) {
             
-            bricks = new Bricks();
+            bricks = new RedBricks();
             bricksArray.add(bricks);
 
             add(bricksArray.get(i));
@@ -67,7 +67,7 @@ public class FirstLevel extends JFrame {
 
         for (int i = 20; i < 30; i++) {
             
-            bricks = new Bricks();
+            bricks = new RedBricks();
             bricksArray.add(bricks);
 
             add(bricksArray.get(i));

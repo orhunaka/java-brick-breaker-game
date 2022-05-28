@@ -1,34 +1,28 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
+import java.util.ArrayList;
 import javax.swing.*;
 
-
-public class SecondLevel extends JFrame implements ActionListener {
+public class SecondLevel extends JFrame {
     
+    Player player;
+    Ball ball;
+    RedBricks redBricks;
+    OrangeBricks orangeBricks;
+
+    private final int brickWidth = 30;
+    private final int brickHeight = 10;
+
+    static final int DELAY = 75;
+
+    private int ballYVelocity = 5;
+    private int ballXVelocity = 5;
+
     private static final int SCREEN_WIDTH = 400;
     private static final int SCREEN_HEIGHT = 300;
 
-    private JLabel ball;
-    private final int ballWidth = 25;
-    private final int ballHeight = 25;
-
-    private JLabel player;
-    private final int playerWidth = 80;
-    private final int playerHeight = 20;
-    private int playerStartingPosX = 165;
-    private int playerStartingPosY = 240;
-    private int playerXVelocity = 5;
-
-    private JLabel[] blocks;
-    private JLabel redBlock;
-    private JLabel orangeBlock;
-    private int blockCount = 30;
-    private final int blocksArraySize = 30;
-    private final int blockWidth = 30;
-    private final int blockHeight = 10;
-
+    ArrayList<JLabel> bricksArray = new ArrayList<JLabel>();
+    private final int bricksArraySize = 30;
     private int bottomLayerStartingPosY = 32;
     private int bottomLayerStartingPosX = 20;
 
@@ -41,44 +35,14 @@ public class SecondLevel extends JFrame implements ActionListener {
         setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
         setBackground(Color.black);  
 
-        ImageIcon ballIcon = new ImageIcon("ball.png");
-        Image ballImg = ballIcon.getImage();
-        Image scaledBallImg = ballImg.getScaledInstance(ballWidth, ballHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledBallIcon = new ImageIcon(scaledBallImg);
-        ball = new JLabel();
-        ball.setIcon(scaledBallIcon);
-
-        ImageIcon playerIcon = new ImageIcon("player.png");
-        Image playerImg = playerIcon.getImage();
-        Image scaledPlayerImg = playerImg.getScaledInstance(playerWidth, playerHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledPlayerIcon = new ImageIcon(scaledPlayerImg);
-        player = new JLabel();
-        player.setIcon(scaledPlayerIcon);
-
-        ImageIcon redBlockIcon = new ImageIcon("level1block.png");
-        Image redBlockImg = redBlockIcon.getImage();
-        Image redScaledBlockImg = redBlockImg.getScaledInstance(blockWidth, blockHeight, Image.SCALE_SMOOTH);
-        ImageIcon redScaledBlockIcon = new ImageIcon(redScaledBlockImg);
-
-        ImageIcon orangeBlockIcon = new ImageIcon("level2block.png");
-        Image orangeBlockImg = orangeBlockIcon.getImage();
-        Image orangeScaledBlockImg = orangeBlockImg.getScaledInstance(blockWidth, blockHeight, Image.SCALE_SMOOTH);
-        ImageIcon orangeScaledBlockIcon = new ImageIcon(orangeScaledBlockImg);
-        
-
-        blocks = new JLabel[blocksArraySize];
-
         //Bottom Layer Red Blocks
         for (int i = 0; i < 10; i++) {
 
-            System.out.println("Debug");
+            redBricks = new RedBricks();
+            bricksArray.add(redBricks);
 
-            redBlock = new JLabel();
-            redBlock.setIcon(redScaledBlockIcon);
-            blocks[i] = redBlock;
-
-            add(blocks[i]);
-            blocks[i].setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, blockWidth, blockHeight);
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
             
             bottomLayerStartingPosX += 36;
         }
@@ -86,16 +50,13 @@ public class SecondLevel extends JFrame implements ActionListener {
         bottomLayerStartingPosX = 20;
 
         //Mid Layer Orange Blocks
-        for (int j = 10; j < 20; j++) {
+        for (int i = 10; i < 20; i++) {
 
-            System.out.println("Debug");
+            orangeBricks = new OrangeBricks();
+            bricksArray.add(orangeBricks);
 
-            orangeBlock = new JLabel();
-            orangeBlock.setIcon(orangeScaledBlockIcon);
-            blocks[j] = orangeBlock;
-
-            add(blocks[j]);
-            blocks[j].setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, blockWidth, blockHeight);
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
             
             bottomLayerStartingPosX += 36;
         }
@@ -103,33 +64,77 @@ public class SecondLevel extends JFrame implements ActionListener {
         bottomLayerStartingPosX = 20;
 
         //Top Layer Red Blocks
-        for (int k = 20; k < 30; k++) {
+        for (int i = 20; i < 30; i++) {
 
-            System.out.println("Debug");
+            redBricks = new RedBricks();
+            bricksArray.add(redBricks);
 
-            redBlock = new JLabel();
-            redBlock.setIcon(redScaledBlockIcon);
-            blocks[k] = redBlock;
-
-            add(blocks[k]);
-            blocks[k].setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, blockWidth, blockHeight);
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
             
             bottomLayerStartingPosX += 36;
         }
 
+        ball = new Ball();
         add(ball);
-        ball.setBounds(playerStartingPosX, playerStartingPosY, ballWidth, ballHeight);
 
-        add(player);
-        player.setBounds(playerStartingPosX, playerStartingPosY, playerWidth, playerHeight);
-        player.setFocusable(true);
+        player = new Player();
         player.addKeyListener(new MovePlayer());
+        add(player);
 
         setVisible(true);
-    }
 
+        Timer timer = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                MoveBall();
+                checkIntersection(ball, bricksArray);
+            }
+
+            //Method to automatically move the ball.
+            private void MoveBall() {
+                
+                Point ballPoint = ball.getLocation();
+                int ballX = ballPoint.x;
+                int ballY = ballPoint.y;                
+                
+                ball.setLocation(ballX + ballXVelocity, ballY + ballYVelocity);
+                
+                if (ballPoint.x < 0 || ballPoint.x > 370) {
+                    ballXVelocity = -ballXVelocity;
+                    ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
+                }
+                if (ballPoint.y < 0 || ballPoint.y > 240) {
+                    ballYVelocity = -ballYVelocity;
+                    ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
+                }
+            }
+
+            //Method to check intersection.
+            private void checkIntersection(JLabel ballObject, ArrayList<JLabel> bricksArray) {
+
+                
+                for (int i = 0; i < bricksArraySize; i++) {
+
+                    Rectangle brickObject =  bricksArray.get(i).getBounds();
+                    Rectangle result = SwingUtilities.computeIntersection(ballObject.getX(), ballObject.getY(), ballObject.getWidth(), ballObject.getHeight(), brickObject);
+                    if ( result.getWidth() > 0 && result.getHeight() > 0) {
+                        
+                        remove(bricksArray.get(i));
+                    }
+                }
+
+            }
+        });
+        timer.start();
+    }
+    
+    //KeyListener to move the player.
     public class MovePlayer extends KeyAdapter {
         
+        int playerXVelocity = 10;
+
         public void keyPressed(KeyEvent event) {
             
             Point playerPoint = player.getLocation();
@@ -145,11 +150,5 @@ public class SecondLevel extends JFrame implements ActionListener {
                     break;    
             }
         }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        
     }
 }
