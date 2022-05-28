@@ -5,7 +5,7 @@ import javax.swing.Timer;
 import javax.swing.*;
 
 
-public class FirstLevel extends JPanel implements ActionListener {
+public class FirstLevel extends JFrame implements ActionListener {
 
     static final int DELAY = 75;
     Timer timer = new Timer(DELAY, this);
@@ -14,7 +14,7 @@ public class FirstLevel extends JPanel implements ActionListener {
     private final int ballWidth = 25;
     private final int ballHeight = 25;
 
-    private JLabel player;
+    private JComponent player;
     ImageIcon scaledPlayerIcon;
     private final int playerWidth = 80;
     private final int playerHeight = 20;
@@ -59,7 +59,7 @@ public class FirstLevel extends JPanel implements ActionListener {
         Image playerImg = playerIcon.getImage();
         Image scaledPlayerImg = playerImg.getScaledInstance(playerWidth, playerHeight, Image.SCALE_SMOOTH);
         scaledPlayerIcon = new ImageIcon(scaledPlayerImg);
-        player = new JLabel();
+        player = new JComponent();
         player.setIcon(scaledPlayerIcon);
 
         ImageIcon blockIcon = new ImageIcon("level1block.png");
