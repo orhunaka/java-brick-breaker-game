@@ -19,11 +19,16 @@ public class FirstLevel extends JFrame {
     private int ballYVelocity = 5;
     private int ballXVelocity = 5;
 
+    private JLabel scoreText = new JLabel("Score: ");
+    private JLabel score = new JLabel("0");
+    private int brickBrokenScore = 1;
+    private int startingScore = 0;
+
     private static final int SCREEN_WIDTH = 400;
     private static final int SCREEN_HEIGHT = 300;
 
     ArrayList<JLabel> bricksArray = new ArrayList<JLabel>();
-    private final int bricksArraySize = 30;
+    private int bricksArraySize = 30;
     private int bottomLayerStartingPosY = 32;
     private int bottomLayerStartingPosX = 20;
 
@@ -85,6 +90,18 @@ public class FirstLevel extends JFrame {
         player.addKeyListener(new MovePlayer());
         add(player);
 
+        //Adding the score text.
+        add(scoreText);
+        add(score);
+        //scoreText.setSize(20, 10);
+        //scoreText.setPreferredSize(new Dimension(200, 100));
+        scoreText.setBounds(10, 5, 50, 20);
+        scoreText.setForeground(Color.BLACK);
+        score.setBounds(55, 5, 50, 20);
+        score.setForeground(Color.BLACK);
+        scoreText.setVisible(true);
+        score.setVisible(true);
+
         //Setting the frame's visibility option.
         setVisible(true);
 
@@ -94,12 +111,19 @@ public class FirstLevel extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                MoveBall();
+                MoveBallAndCheckCollision();
                 checkIntersection(ball, bricksArray);
+                //checkIntersectionWithPlayer(ball, player);
+
+                /*if (bricksArraySize == 0) {
+
+                    JOptionPane.showMessageDialog(null, "Congratulations! Let's go to round 2!");
+                    SecondLevel secondLevel = new SecondLevel();
+                }*/
             }
 
             //Method to automatically move the ball.
-            private void MoveBall() {
+            private void MoveBallAndCheckCollision() {
                 
                 Point ballPoint = ball.getLocation();
                 int ballX = ballPoint.x;
@@ -111,16 +135,37 @@ public class FirstLevel extends JFrame {
                     ballXVelocity = -ballXVelocity;
                     ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
                 }
-                if (ballPoint.y < 0 || ballPoint.y > 240) {
+                if (ballPoint.y < 0) {
                     ballYVelocity = -ballYVelocity;
                     ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
                 }
+                if (ballPoint.y > 240) {
+                    JOptionPane.showMessageDialog(null, "Failed. Try again.");
+                    System.exit(0);
+                }
+
+                Rectangle playerObject = player.getBounds();
+                //Rectangle brickObject = bricks.getBounds();
+                Rectangle resultWithPlayer = SwingUtilities.computeIntersection(ball.getX(), ball.getY(), ball.getWidth(), ball.getHeight(), playerObject);
+                //Rectangle resultWithBrick = SwingUtilities.computeIntersection(ball.getX(), ball.getY(), ball.getWidth(), ball.getHeight(), brickObject);
+
+                if (resultWithPlayer.getWidth() > 0 && resultWithPlayer.getHeight() > 0) {
+                    ballYVelocity = -ballYVelocity;
+                    ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
+                }
+                /*if (resultWithBrick.getWidth() > 0 && resultWithBrick.getHeight() > 0) {
+
+                    if (ballXVelocity > 0 && ballYVelocity > 0) {
+
+                    }
+                }*/
             }
 
             //Method to check intersection.
             private void checkIntersection(JLabel ballObject, ArrayList<JLabel> bricksArray) {
-
                 
+                String textToSetAsScore;
+
                 for (int i = 0; i < bricksArraySize; i++) {
 
                     Rectangle brickObject =  bricksArray.get(i).getBounds();
@@ -128,9 +173,14 @@ public class FirstLevel extends JFrame {
                     if ( result.getWidth() > 0 && result.getHeight() > 0) {
                         
                         remove(bricksArray.get(i));
+                        revalidate();
+                        repaint();
+
+                        startingScore += brickBrokenScore;
+                        textToSetAsScore = String.valueOf(startingScore);
+                        score.setText(textToSetAsScore);
                     }
                 }
-
             }
         });
         timer.start();
