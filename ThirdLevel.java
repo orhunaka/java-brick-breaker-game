@@ -28,7 +28,7 @@ public class ThirdLevel extends JFrame {
 
     public ThirdLevel() {
 
-        super("Level 2");
+        super("Level 3");
         setLayout(null);
 
         ImageIcon ballIcon = new ImageIcon("ball.png");

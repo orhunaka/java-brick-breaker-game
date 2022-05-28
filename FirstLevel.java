@@ -1,22 +1,30 @@
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import javax.swing.Timer;
 
 import javax.swing.*;
 
 
-public class FirstLevel extends JFrame {
-    
+public class FirstLevel extends JPanel implements ActionListener {
+
+    static final int DELAY = 75;
+    Timer timer = new Timer(DELAY, this);
+
     private JLabel ball;
     private final int ballWidth = 25;
     private final int ballHeight = 25;
 
     private JLabel player;
+    ImageIcon scaledPlayerIcon;
     private final int playerWidth = 80;
     private final int playerHeight = 20;
+    private int playerStartingPosX = 165;
+    private int playerStartingPosY = 240;
+    private int playerXVelocity = 5;
 
     private JLabel[] blocks;
     private JLabel block;
+    private int blockCount = 30;
     private final int blocksArraySize = 30;
     private final int blockWidth = 30;
     private final int blockHeight = 10;
@@ -26,8 +34,19 @@ public class FirstLevel extends JFrame {
 
     public FirstLevel() {
 
-        super("Level 1");
         setLayout(null);
+        addKeyListener(new MyKeyAdapter());
+
+        startGame();
+    }
+
+    public void startGame() {
+
+        timer.start();
+        drawComponents();
+    }
+
+    public void drawComponents() {
 
         ImageIcon ballIcon = new ImageIcon("ball.png");
         Image ballImg = ballIcon.getImage();
@@ -39,7 +58,7 @@ public class FirstLevel extends JFrame {
         ImageIcon playerIcon = new ImageIcon("player.png");
         Image playerImg = playerIcon.getImage();
         Image scaledPlayerImg = playerImg.getScaledInstance(playerWidth, playerHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledPlayerIcon = new ImageIcon(scaledPlayerImg);
+        scaledPlayerIcon = new ImageIcon(scaledPlayerImg);
         player = new JLabel();
         player.setIcon(scaledPlayerIcon);
 
@@ -53,8 +72,6 @@ public class FirstLevel extends JFrame {
 
         for (int j = 0; j < 3; j++) {
             for (int i = 0; i < 10; i++) {
-
-                System.out.println("Debug");
 
                 block = new JLabel();
                 block.setIcon(scaledBlockIcon);
@@ -73,6 +90,48 @@ public class FirstLevel extends JFrame {
         ball.setBounds(100, 100, ballWidth, ballHeight);
 
         add(player);
-        player.setBounds(165, 240, playerWidth, playerHeight);
+        player.setFocusable(true);
+        player.setBounds(playerStartingPosX, playerStartingPosY, playerWidth, playerHeight);
+    }
+
+    public void move() {
+
+
+    }
+
+    public void checkCollision() {
+
+
+    }
+
+    public void checkBricks() {
+
+
+    }
+
+    public void gameOver() {
+
+
+    }
+
+    public class MyKeyAdapter extends KeyAdapter {
+        public void keyPressed(KeyEvent event) {
+            switch(event.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    playerStartingPosX -= playerXVelocity;
+                    player.setLocation(playerStartingPosX, playerStartingPosY);
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    playerStartingPosX += playerXVelocity;
+                    player.setLocation(playerStartingPosX, playerStartingPosY);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        // TODO Auto-generated method stub
+        
     }
 }
