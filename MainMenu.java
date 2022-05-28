@@ -11,9 +11,6 @@ private JButton helpButton;
 private JButton aboutButton;
 private JButton exitButton;
 
-private static final int SCREEN_WIDTH = 400;
-private static final int SCREEN_HEIGHT = 300;
-
     public MainMenu() {
 
         super("Arkanoid");
@@ -63,17 +60,7 @@ private static final int SCREEN_HEIGHT = 300;
 
                 JOptionPane.showMessageDialog(null, "The game is about to begin. Break all the bricks to get to the next level. Good luck.");
 
-                JFrame firstLevel = new JFrame();
-                firstLevel.setLocationRelativeTo(null);
-                firstLevel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                firstLevel.setTitle("Level 1");
-                firstLevel.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-                firstLevel.setBackground(Color.black);
-
-                FirstLevel firstLevelPanel = new FirstLevel();
-                firstLevel.add(firstLevelPanel);
-
-                firstLevel.setVisible(true);
+                new FirstLevel();
             }
         }
     }

@@ -1,137 +1,160 @@
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.Timer;
+import java.util.ArrayList;
 
+import javax.swing.Timer;
 import javax.swing.*;
 
+public class FirstLevel extends JFrame {
 
-public class FirstLevel extends JFrame implements ActionListener {
+    Player player;
+    Ball ball;
+    Bricks bricks;
+
+    private final int brickWidth = 30;
+    private final int brickHeight = 10;
 
     static final int DELAY = 75;
-    Timer timer = new Timer(DELAY, this);
 
-    private JLabel ball;
-    private final int ballWidth = 25;
-    private final int ballHeight = 25;
+    private int ballYVelocity = 5;
+    private int ballXVelocity = 5;
 
-    private JComponent player;
-    ImageIcon scaledPlayerIcon;
-    private final int playerWidth = 80;
-    private final int playerHeight = 20;
-    private int playerStartingPosX = 165;
-    private int playerStartingPosY = 240;
-    private int playerXVelocity = 5;
+    private static final int SCREEN_WIDTH = 400;
+    private static final int SCREEN_HEIGHT = 300;
 
-    private JLabel[] blocks;
-    private JLabel block;
-    private int blockCount = 30;
-    private final int blocksArraySize = 30;
-    private final int blockWidth = 30;
-    private final int blockHeight = 10;
-
+    ArrayList<JLabel> bricksArray = new ArrayList<JLabel>();
+    private final int bricksArraySize = 30;
     private int bottomLayerStartingPosY = 32;
     private int bottomLayerStartingPosX = 20;
 
     public FirstLevel() {
-
-        setLayout(null);
-        addKeyListener(new MyKeyAdapter());
-
-        startGame();
-    }
-
-    public void startGame() {
-
-        timer.start();
-        drawComponents();
-    }
-
-    public void drawComponents() {
-
-        ImageIcon ballIcon = new ImageIcon("ball.png");
-        Image ballImg = ballIcon.getImage();
-        Image scaledBallImg = ballImg.getScaledInstance(ballWidth, ballHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledBallIcon = new ImageIcon(scaledBallImg);
-        ball = new JLabel();
-        ball.setIcon(scaledBallIcon);
-
-        ImageIcon playerIcon = new ImageIcon("player.png");
-        Image playerImg = playerIcon.getImage();
-        Image scaledPlayerImg = playerImg.getScaledInstance(playerWidth, playerHeight, Image.SCALE_SMOOTH);
-        scaledPlayerIcon = new ImageIcon(scaledPlayerImg);
-        player = new JComponent();
-        player.setIcon(scaledPlayerIcon);
-
-        ImageIcon blockIcon = new ImageIcon("level1block.png");
-        Image blockImg = blockIcon.getImage();
-        Image scaledBlockImg = blockImg.getScaledInstance(blockWidth, blockHeight, Image.SCALE_SMOOTH);
-        ImageIcon scaledBlockIcon = new ImageIcon(scaledBlockImg);
         
+        //Creating the frame.
+        super("Level 1");
+        setLocationRelativeTo(null);
+        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setBackground(Color.black);  
 
-        blocks = new JLabel[blocksArraySize];
+        //Creating the bricks.
+        for (int i = 0; i < 10; i++) {
 
-        for (int j = 0; j < 3; j++) {
-            for (int i = 0; i < 10; i++) {
+            bricks = new Bricks();
+            bricksArray.add(bricks);
 
-                block = new JLabel();
-                block.setIcon(scaledBlockIcon);
-                blocks[i] = block;
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
+            
+            bottomLayerStartingPosX += 36;
+        }
+        bottomLayerStartingPosY += 16;
+        bottomLayerStartingPosX = 20;
 
-                add(blocks[i]);
-                blocks[i].setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, blockWidth, blockHeight);
-                
-                bottomLayerStartingPosX += 36;
-            }
-            bottomLayerStartingPosY += 16;
-            bottomLayerStartingPosX = 20;
+        for (int i = 10; i < 20; i++) {
+            
+            bricks = new Bricks();
+            bricksArray.add(bricks);
+
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
+            
+            bottomLayerStartingPosX += 36;
         }
 
+        bottomLayerStartingPosY += 16;
+        bottomLayerStartingPosX = 20;
+
+        for (int i = 20; i < 30; i++) {
+            
+            bricks = new Bricks();
+            bricksArray.add(bricks);
+
+            add(bricksArray.get(i));
+            bricksArray.get(i).setBounds(bottomLayerStartingPosX, bottomLayerStartingPosY, brickWidth, brickHeight);
+            
+            bottomLayerStartingPosX += 36;
+        }
+
+        //Creating the ball and adding it to the frame.
+        ball = new Ball();
         add(ball);
-        ball.setBounds(100, 100, ballWidth, ballHeight);
-
+        
+        //Creating the player and adding it to the frame.
+        player = new Player();
+        player.addKeyListener(new MovePlayer());
         add(player);
-        player.setFocusable(true);
-        player.setBounds(playerStartingPosX, playerStartingPosY, playerWidth, playerHeight);
+
+        //Setting the frame's visibility option.
+        setVisible(true);
+
+        //Every 50 milliseconds, checks the functions
+        //below.
+        Timer timer = new Timer(50, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                MoveBall();
+                checkIntersection(ball, bricksArray);
+            }
+
+            //Method to automatically move the ball.
+            private void MoveBall() {
+                
+                Point ballPoint = ball.getLocation();
+                int ballX = ballPoint.x;
+                int ballY = ballPoint.y;                
+                
+                ball.setLocation(ballX + ballXVelocity, ballY + ballYVelocity);
+                
+                if (ballPoint.x < 0 || ballPoint.x > 370) {
+                    ballXVelocity = -ballXVelocity;
+                    ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
+                }
+                if (ballPoint.y < 0 || ballPoint.y > 240) {
+                    ballYVelocity = -ballYVelocity;
+                    ball.setLocation(ballPoint.x + ballXVelocity, ballPoint.y + ballYVelocity);
+                }
+            }
+
+            //Method to check intersection.
+            private void checkIntersection(JLabel ballObject, ArrayList<JLabel> bricksArray) {
+
+                
+                for (int i = 0; i < bricksArraySize; i++) {
+
+                    Rectangle brickObject =  bricksArray.get(i).getBounds();
+                    Rectangle result = SwingUtilities.computeIntersection(ballObject.getX(), ballObject.getY(), ballObject.getWidth(), ballObject.getHeight(), brickObject);
+                    if ( result.getWidth() > 0 && result.getHeight() > 0) {
+                        
+                        remove(bricksArray.get(i));
+                    }
+                }
+
+            }
+        });
+        timer.start();
     }
 
-    public void move() {
+    //KeyListener to move the player.
+    public class MovePlayer extends KeyAdapter {
+        
+        int playerXVelocity = 10;
 
-
-    }
-
-    public void checkCollision() {
-
-
-    }
-
-    public void checkBricks() {
-
-
-    }
-
-    public void gameOver() {
-
-
-    }
-
-    public class MyKeyAdapter extends KeyAdapter {
         public void keyPressed(KeyEvent event) {
+            
+            Point playerPoint = player.getLocation();
+            int x = playerPoint.x;
+            int y = playerPoint.y;
+
             switch(event.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    playerStartingPosX -= playerXVelocity;
-                    player.setLocation(playerStartingPosX, playerStartingPosY);
+                    player.setLocation(x - playerXVelocity, y);
                     break;
                 case KeyEvent.VK_RIGHT:
-                    playerStartingPosX += playerXVelocity;
-                    player.setLocation(playerStartingPosX, playerStartingPosY);
-                    break;
+                    player.setLocation(x + playerXVelocity, y);
+                    break;    
             }
         }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        // TODO Auto-generated method stub
-        
     }
 }

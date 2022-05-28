@@ -7,6 +7,9 @@ import javax.swing.*;
 
 public class ThirdLevel extends JFrame {
     
+    private static final int SCREEN_WIDTH = 400;
+    private static final int SCREEN_HEIGHT = 300;
+
     private JLabel ball;
     private final int ballWidth = 25;
     private final int ballHeight = 25;
@@ -14,11 +17,15 @@ public class ThirdLevel extends JFrame {
     private JLabel player;
     private final int playerWidth = 80;
     private final int playerHeight = 20;
+    private int playerStartingPosX = 165;
+    private int playerStartingPosY = 240;
+    private int playerXVelocity = 5;
 
     private JLabel[] blocks;
     private JLabel redBlock;
     private JLabel orangeBlock;
     private JLabel blackBlock;
+    private int blockCount = 30;
     private final int blocksArraySize = 30;
     private final int blockWidth = 30;
     private final int blockHeight = 10;
@@ -29,7 +36,11 @@ public class ThirdLevel extends JFrame {
     public ThirdLevel() {
 
         super("Level 3");
+        setLocationRelativeTo(null);
         setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setBackground(Color.black); 
 
         ImageIcon ballIcon = new ImageIcon("ball.png");
         Image ballImg = ballIcon.getImage();
@@ -117,6 +128,29 @@ public class ThirdLevel extends JFrame {
         ball.setBounds(100, 100, ballWidth, ballHeight);
 
         add(player);
-        player.setBounds(165, 240, playerWidth, playerHeight);
+        player.setBounds(playerStartingPosX, playerStartingPosY, playerWidth, playerHeight);
+        player.setFocusable(true);
+        player.addKeyListener(new MovePlayer());
+
+        setVisible(true);
+    }
+
+    public class MovePlayer extends KeyAdapter {
+        
+        public void keyPressed(KeyEvent event) {
+            
+            Point playerPoint = player.getLocation();
+            int x = playerPoint.x;
+            int y = playerPoint.y;
+
+            switch(event.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    player.setLocation(x - playerXVelocity, y);
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    player.setLocation(x + playerXVelocity, y);
+                    break;    
+            }
+        }
     }
 }
